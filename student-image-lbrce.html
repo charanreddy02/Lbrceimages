@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Photo Viewer</title>
+  <style>
+    body {
+      background-color: #f4f7f9;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .photo-section {
+      margin-top: 20px;
+    }
+
+    .photo-section img {
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Enter PIN to View Photo</h2>
+  <input type="text" id="pinInput" placeholder="Enter your PIN (e.g. 23765A0359)" />
+  <button onclick="showPhoto()">View Photo</button>
+
+  <div class="photo-section" id="photoSection" style="display: none;">
+    <img id="studentPhoto" src="" alt="Student Photo" onerror="handleError()" />
+    <div id="errorText" class="error"></div>
+  </div>
+</div>
+
+<script>
+  function showPhoto() {
+    const pin = document.getElementById("pinInput").value.trim();
+    const photo = document.getElementById("studentPhoto");
+    const section = document.getElementById("photoSection");
+    const errorText = document.getElementById("errorText");
+
+    if (!pin) {
+      alert("Please enter a valid PIN.");
+      return;
+    }
+
+    // Construct the image URL
+    const baseUrl = "https://erp.lbrce.ac.in/Admissions/Stu_Photo_Sign/P-";
+    const imageUrl = `${baseUrl}${pin}.jpg`;
+
+    // Show section and reset error
+    section.style.display = "block";
+    errorText.textContent = "";
+    photo.src = imageUrl;
+  }
+
+  function handleError() {
+    const errorText = document.getElementById("errorText");
+    errorText.textContent = "Could not load photo. Please check the PIN.";
+  }
+</script>
+
+</body>
+</html>
