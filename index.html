@@ -1,93 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Student Photo Viewer</title>
-  <style>
-    body {
-      background-color: #f4f7f9;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lbrce Photo Viewer</title>
+<style>
+  body {
+    background: #f4f7f9;
+    font-family: "Google Sans", Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
 
-    .container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
+  .container {
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    text-align: center;
+    width: 90%;
+    max-width: 450px;
+    padding: 40px 30px;
+    position: relative;
+    z-index: 10;
+    animation: fadeIn 0.5s ease;
+  }
 
-    h2 {
-      margin-bottom: 20px;
-    }
+  h2 {
+    margin-bottom: 25px;
+    color: #202124;
+    font-weight: 600;
+  }
 
-    input[type="text"] {
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 15px;
-    }
+  input[type="text"] {
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    outline: none;
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(4px);
+  }
 
-    button {
-      background-color: #007bff;
-      color: white;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      font-size: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+  input[type="text"]:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
+  }
 
-    button:hover {
-      background-color: #0056b3;
-    }
+  button {
+    background-color: #1a73e8;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: 0.3s;
+  }
 
-    .photo-section {
-      margin-top: 20px;
-    }
+  button:hover {
+    background-color: #155fc0;
+  }
 
-    .photo-section img {
-      max-width: 100%;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      display: none; /* hidden until loaded */
-    }
+  .photo-section {
+    margin-top: 25px;
+    position: relative;
+  }
 
-    .error {
-      color: red;
-      margin-top: 10px;
-    }
+  .photo-section img {
+    max-width: 100%;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    display: none;
+    cursor: zoom-in;
+    animation: fadeIn 0.5s ease forwards;
+  }
 
-    /* Loading Spinner */
-    .loader {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #007bff;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-      display: none;
-    }
+  .photo-section img:hover {
+    transform: scale(1.02);
+  }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+  .error {
+    color: #d93025;
+    margin-top: 12px;
+  }
+
+  .download-btn {
+    background-color: #34a853;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .download-btn:hover {
+    background-color: #2a8a44;
+  }
+
+  .try-again-btn {
+    background-color: #fbbc05;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .try-again-btn:hover {
+    background-color: #e6aa00;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .loader {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    border: 8px solid transparent;
+    border-top-color: #4285F4;
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite, colorChange 3s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes colorChange {
+    0% { border-top-color: #4285F4; }
+    25% { border-top-color: #DB4437; }
+    50% { border-top-color: #F4B400; }
+    75% { border-top-color: #0F9D58; }
+    100% { border-top-color: #4285F4; }
+  }
+
+  .loading-text {
+    margin-top: 18px;
+    font-size: 16px;
+    color: #5f6368;
+    animation: fade 0.5s ease;
+  }
+
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px);}
+    to { opacity: 1; transform: translateY(0);}
+  }
+
+  .lightbox {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.2);
+  }
+
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+    font-weight: 400;
+  }
+</style>
 </head>
 <body>
+
+<div class="overlay" id="overlay">
+  <div class="loader"></div>
+  <div class="loading-text" id="loadingText">Fetching photo from server...</div>
+</div>
 
 <div class="container">
   <h2>Enter PIN to View Photo</h2>
@@ -95,47 +215,108 @@
   <button onclick="showPhoto()">View Photo</button>
 
   <div class="photo-section" id="photoSection" style="display: none;">
-    <div class="loader" id="loader"></div>
     <img id="studentPhoto" src="" alt="Student Photo" />
+    <button class="download-btn" id="downloadBtn" onclick="downloadPhoto()">Download Photo</button>
+    <button class="try-again-btn" id="tryAgainBtn" onclick="resetApp()">Try Another PIN</button>
     <div id="errorText" class="error"></div>
   </div>
 </div>
 
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <span class="close">&times;</span>
+  <img id="lightboxImg" src="" alt="Full-size Photo" />
+</div>
+
 <script>
-  function showPhoto() {
-    const pin = document.getElementById("pinInput").value.trim();
-    const photo = document.getElementById("studentPhoto");
-    const section = document.getElementById("photoSection");
-    const loader = document.getElementById("loader");
-    const errorText = document.getElementById("errorText");
+const messages = [
+  "Fetching photo from server...",
+  "Processing image data...",
+  "Almost there...",
+  "Ready!"
+];
 
-    if (!pin) {
-      alert("Please enter a valid PIN.");
-      return;
-    }
+function showPhoto() {
+  const pin = document.getElementById("pinInput").value.trim();
+  const photo = document.getElementById("studentPhoto");
+  const section = document.getElementById("photoSection");
+  const overlay = document.getElementById("overlay");
+  const loadingText = document.getElementById("loadingText");
+  const errorText = document.getElementById("errorText");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const tryAgainBtn = document.getElementById("tryAgainBtn");
 
-    const baseUrl = "https://erp.lbrce.ac.in/Admissions/Stu_Photo_Sign/P-";
-    const imageUrl = `${baseUrl}${pin}.jpg`;
-
-    section.style.display = "block";
-    loader.style.display = "block";
-    errorText.textContent = "";
-    photo.style.display = "none";
-
-    // Preload image
-    const tempImg = new Image();
-    tempImg.onload = function() {
-      loader.style.display = "none";
-      photo.src = imageUrl;
-      photo.style.display = "block";
-    };
-    tempImg.onerror = function() {
-      loader.style.display = "none";
-      errorText.textContent = "Could not load photo. Please check the PIN.";
-    };
-
-    tempImg.src = imageUrl;
+  if (!pin) {
+    alert("Please enter a valid PIN.");
+    return;
   }
+
+  const baseUrl = "https://erp.lbrce.ac.in/Admissions/Stu_Photo_Sign/P-";
+  const imageUrl = `${baseUrl}${pin}.jpg`;
+
+  overlay.style.display = "flex";
+  section.style.display = "block";
+  photo.style.display = "none";
+  downloadBtn.style.display = "none";
+  tryAgainBtn.style.display = "none";
+  errorText.textContent = "";
+
+  let msgIndex = 0;
+  loadingText.textContent = messages[msgIndex];
+  const msgInterval = setInterval(() => {
+    msgIndex++;
+    if (msgIndex < messages.length) {
+      loadingText.textContent = messages[msgIndex];
+    }
+  }, 1000);
+
+  const tempImg = new Image();
+  tempImg.onload = function() {
+    clearInterval(msgInterval);
+    overlay.style.display = "none";
+    photo.src = imageUrl;
+    photo.style.display = "block";
+    downloadBtn.style.display = "inline-block";
+    tryAgainBtn.style.display = "inline-block";
+  };
+  tempImg.onerror = function() {
+    clearInterval(msgInterval);
+    overlay.style.display = "none";
+    errorText.textContent = "Could not load photo. Please check the PIN.";
+    tryAgainBtn.style.display = "inline-block";
+  };
+  tempImg.src = imageUrl;
+}
+
+function resetApp() {
+  document.getElementById("pinInput").value = "";
+  document.getElementById("studentPhoto").src = "";
+  document.getElementById("studentPhoto").style.display = "none";
+  document.getElementById("photoSection").style.display = "none";
+  document.getElementById("downloadBtn").style.display = "none";
+  document.getElementById("tryAgainBtn").style.display = "none";
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("errorText").textContent = "";
+}
+
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
+document.getElementById("studentPhoto").addEventListener("click", function() {
+  lightbox.style.display = "flex";
+  lightboxImg.src = this.src;
+});
+function closeLightbox() {
+  lightbox.style.display = "none";
+}
+
+function downloadPhoto() {
+  const img = document.getElementById("studentPhoto");
+  const link = document.createElement("a");
+  link.href = img.src;
+  link.download = img.src.split("/").pop();
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 </script>
 
 </body>
